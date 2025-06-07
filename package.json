@@ -1,0 +1,27 @@
+{
+  "name": "@superhero/wild-trie",
+  "description": "A trie data structure with wildcard path support.",
+  "version": "4.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "syntax-check": "syntax-check",
+    "test": "syntax-check; FORCE_COLOR=1 node --test --test-reporter=@superhero/audit/reporter --experimental-test-coverage"
+  },
+  "devDependencies": {
+    "@superhero/audit": "^4.0.3",
+    "@superhero/syntax-check": "0.0.2"
+  },
+  "author": {
+    "name": "Erik Landvall",
+    "email": "erik@landvall.se"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superhero/wild-trie"
+  }
+}
