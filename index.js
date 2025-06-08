@@ -12,9 +12,9 @@ export default class WildTrie
   /**
    * Assign custom configurations to the WildTrie instance.
    * 
-   * @param {Object} [config] Configurations for the WildTrie.
-   * @param {*} [config.wildcard = '*'] Wildcard that match any branch.
-   * @param {*} [config.globstar = '**'] Wildcard that match any descendant branch.
+   * @param {Object}  [config]                  - Configurations for the WildTrie.
+   * @param {*}       [config.wildcard = '*']   - Wildcard that match any branch.
+   * @param {*}       [config.globstar = '**']  - Wildcard that match any descendant branch.
    */
   constructor(config)
   {
@@ -43,9 +43,9 @@ export default class WildTrie
    * 
    * @param {Object} config - The configuration object to assign.
    * 
-   * @returns {Object} The configurations object of the instance.
+   * @returns {Object} - The configurations object of the instance.
    * 
-   * @throws {TypeError} If the provided config is not an object.
+   * @throws {TypeError} - If the provided config is not an object.
    */
   set config(config)
   {
@@ -65,7 +65,7 @@ export default class WildTrie
   /**
    * Getter for the private configurations.
    * 
-   * @returns {Object} The configurations object of the instance.
+   * @returns {Object} - The configurations object of the instance.
    */
   get config()
   {
@@ -75,8 +75,8 @@ export default class WildTrie
   /**
    * Declares the defined path, if not already defined.
    * 
-   * @param {*} [branch] 
-   * @param  {...*} [path] 
+   * @param {*}     [branch] 
+   * @param {...*}  [path] 
    * 
    * @returns {WildTrie}
    */
@@ -102,7 +102,7 @@ export default class WildTrie
    * 
    * @param {*} value The value to define on "this" trie node.
    * 
-   * @returns {WildTrie} Returns the trie node.
+   * @returns {WildTrie} - Returns the trie node.
    */
   define(value)
   {
@@ -113,9 +113,9 @@ export default class WildTrie
   /**
    * Deletes the specific branch of the trie path specified.
    * 
-   * @param  {...*} [path]
+   * @param {...*} [path]
    * 
-   * @returns {boolean} Mutatated
+   * @returns {boolean} - Mutatated
    */
   delete(...path)
   {
@@ -126,12 +126,11 @@ export default class WildTrie
   }
 
   /**
-   * Returns a tuplet collection of all the descendant branches paired with their linked sub-tries.
-   * Returns a flat entries collection of all the recursive branches and their sub-tries.
+   * Returns a tuplet collection of all the descendant branches paired with their linked trie nodes.
    * 
-   * @param  {...any} [path] 
+   * @param {...any} [path] 
    * 
-   * @returns {Array<[*, WildTrie]>}
+   * @returns {Array<[*, WildTrie]>} - A flat entries collection of all the branches; recursively.
    */
   descendants(...path)
   {
@@ -155,7 +154,7 @@ export default class WildTrie
    * If the path doesn't exist, or the path exists - but has no value, then an empty array will be 
    * returned.
    * 
-   * @param  {...*} [path]
+   * @param {...*} [path]
    * 
    * @returns {Array<[*]>}
    */
@@ -168,7 +167,7 @@ export default class WildTrie
    * Checks if the specified path exists in the trie, returning true if it does, or false if it
    * doesn't.
    * 
-   * @param  {...*} [path]
+   * @param {...*} [path]
    * 
    * @returns {boolean}
    */
@@ -178,11 +177,11 @@ export default class WildTrie
   }
 
   /**
-   * Returns the specific sub-trie node that matches the provided path or undefined if the path
-   * doesn't have a specified sub-trie.
+   * Returns the specific trie node that matches the provided path or undefined if the path
+   * doesn't have a specified trie node.
    * 
-   * @param {*} [branch] 
-   * @param  {...*} [path]
+   * @param {*}     [branch] 
+   * @param {...*}  [path]
    * 
    * @returns {WildTrie|undefined}
    */
@@ -205,12 +204,12 @@ export default class WildTrie
   /**
    * References a branch to a specific trie instance.
    * 
-   * @param {*} branch The branch to reference.
-   * @param {WildTrie} trie The trie instance to reference the branch to.
+   * @param {*}         branch  - The branch to reference.
+   * @param {WildTrie}  trie    - The trie instance to reference the branch to.
    * 
-   * @throws {TypeError} - E_WILD_TRIE_REFERENCE_BRANCH - If the branch is not defined.
-   * @throws {TypeError} - E_WILD_TRIE_REFERENCE_INSTANCE - If the trie is not an instance of WildTrie.
-   * @throws {ReferenceError} - E_WILD_TRIE_REFERENCE_CIRCULAR - If the reference creates a circular path.
+   * @throws {TypeError}      - E_WILD_TRIE_REFERENCE_BRANCH    - If the branch is not defined.
+   * @throws {TypeError}      - E_WILD_TRIE_REFERENCE_INSTANCE  - If the trie is not an instance of WildTrie.
+   * @throws {ReferenceError} - E_WILD_TRIE_REFERENCE_CIRCULAR  - If the reference creates a circular path.
    * 
    * @returns {WildTrie} Returns the WildTrie instance.
    * 
@@ -258,6 +257,7 @@ export default class WildTrie
 
   /**
    * Returns the size of the branches trie map.
+   * 
    * @returns {number}
    */
   get size()
@@ -266,14 +266,11 @@ export default class WildTrie
   }
 
   /**
-   * Returns a JSON representation of the trie structure, including all branches and their
-   * sub-tries.
+   * Returns a JSON representation of the trie structure, including all branches and all trie nodes.
    * 
-   * @param {number} [depth=Infinity] The depth to which the trie should be serialized.
+   * @param {number} [depth=Infinity] - The depth to which the trie should be serialized.
    * 
-   * @typedef {Object} WildTrieJSON Serialized representation of the WildTrie.
-   * @property {Object<*, WildTrieJSON>} branches - The branches of the trie.
-   * @property {*} [value] - The value, if defined.
+   * @typedef {Object<*, WildTrieJSON>} WildTrieJSON - Serialized representation of the WildTrie.
    * 
    * @returns {WildTrieJSON}
    */
@@ -282,69 +279,104 @@ export default class WildTrie
     depth = Number(depth)
 
     const
-      entries       = depth > 0 ? Object.entries(this.branches) : [],
-      mapper        = trie => depth > 0 ? trie.toJSON(depth - 1) : Object.prototype.toString.call(trie),
-      mappedEntries = entries.map(([ branch, trie ]) => [ branch, mapper(trie) ]),
-      branches      = Object.fromEntries(mappedEntries),
-      json          = entries.length ? { branches } : {}
+      entries   = Object.entries(this.branches),
+      mapper    = trie => depth > 0 ? trie.toJSON(depth - 1) : Object.prototype.toString.call(trie),
+      mapped    = entries.map(([ branch, trie ]) => [ branch, mapper(trie) ]),
+      branches  = Object.fromEntries(mapped)
 
-    if(this.value !== undefined)
-    {
-      json.value = this.value
-    }
-
-    return json
+    return branches
   }
 
   /**
    * Returns a string representation of the trie structure in JSON format.
-   * @param {number} [depth=1] The depth to which the trie should be serialized.
-   * @returns {string} A string representation of the trie structure in JSON format.
+   * 
+   * @param {number}    [depth=Infinity]  - The depth to which the trie should be serialized.
+   * @param {Function}  [stylize]         - A function to stylize the output string.
+   * 
+   * @returns {string} - A string representation of the trie structure in JSON format.
    */
-  toString(depth = 1)
+  toString(depth = Infinity, stylize)
   {
-    return JSON.stringify(this.toJSON(depth), null, 2)
+    let output = ''
+
+    const entries = Object.entries(this.branches)
+
+    for(let i = 0; i < entries.length; i++)
+    {
+      const [ branch, trie ] = entries[i]
+      const
+        isLast    = i === entries.length - 1,
+        prefix    = isLast ? '└─' : '├─',
+        subTrie   = depth > 1 && trie.size > 0,
+        tree      = subTrie
+                  ? trie.toString(depth - 1, stylize) 
+                  : trie.size ? '…' : '',
+        mapper    = line => line 
+                    ? (isLast || !subTrie 
+                      ? ' ' : '│') + (subTrie 
+                        ? '  ' : '') + line 
+                    : '',
+        indented  = tree.split('\n').map(mapper).join('\n'),
+        value     = trie.value !== undefined 
+                  ? ` : ${this.#stylize(trie.value, stylize)}` 
+                  : ''
+
+      output += `\n${prefix} ${this.#stylize(branch, stylize)}${value}${indented}`
+    }
+
+    return output
+  }
+
+  #stylize(input, stylize = s => s)
+  {
+    const type  = input === null 
+                ? 'null' 
+                : input instanceof Date 
+                ? 'date' 
+                : input instanceof RegExp 
+                ? 'regexp' 
+                : typeof input
+
+    return stylize(input, type)
   }
 
   /**
    * Custom inspect method for the WildTrie class, allowing it to be inspected in a more readable
    * format when using `util.inspect`.
    * 
-   * @param {number} [depth=Infinity] The depth to which the trie should be serialized.
-   * @param {Object} [options] Options for the inspect method.
-   * @param {number} [options.compact] If true, the output will be more compact.
+   * @param {number} [depth]            - The depth to which the trie should be serialized.
+   * @param {Object} [options]          - Options for the inspect method.
+   * @param {number} [options.compact]  - If true, the output will be more compact.
    * 
-   * @returns {string} A string representation of the trie structure.
+   * @returns {string} - A string representation of the trie structure.
    */
   [util.inspect.custom](depth, options) 
   {
-    depth = Number(depth ?? options.compact) || Infinity
+    depth = depth ?? options?.compact
 
     const
-      stylize     = options.stylize ?? (str => str),
-      className   = stylize(this.constructor.name, 'name'),
-      indentation = 2,
-      json        = this.toJSON(depth),
-      stringified = JSON.stringify(json, null, indentation)
+      stylize     = options?.stylize ?? (str => str),
+      serialized  = this.toString(depth, stylize),
+      className   = stylize(this.name ?? this.constructor.name ?? 'WildTrie', 'special')
 
-    return `${className} ${stringified}`
+    return `${className} ${serialized}`
   }
 
   /**
-   * Traverses the trie structure and returns all sub-tries that match the specified path. 
+   * Traverses the trie structure and returns all trie nodes that match the specified path. 
    * 
    * If the provided path doesn't exist, then an empty array will be returned.
    * 
-   * If the path branch is specific, it will return the sub-trie that match that branch.
+   * If the path branch is specific, it will return the trie node that match that branch.
    * 
-   * If a path branch is defined using a @see config.wildcard, it will return all sub-tries of all
+   * If a path branch is defined using a @see config.wildcard, it will return all trie nodes of all
    * the defined branches of the trie. 
    * 
    * If a path branch is defined using a @see config.globstar, it will return all the
-   * descendants of the trie, including all sub-tries of all the defined branches of the trie.
+   * descendants of the trie, including all trie nodes of all the defined branches of the trie.
    * 
-   * @param {*} [branch] 
-   * @param {...*} [path] 
+   * @param {*}     [branch] 
+   * @param {...*}  [path] 
    * 
    * @returns {Array<[WildTrie]>}
    */

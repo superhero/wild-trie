@@ -15,7 +15,7 @@ npm install @superhero/wild-trie
 Bellow code example will create a trie with the following structure:
 
 ```
-[trie]
+WildTrie
 └─ A
    ├─ B
    │  ├─ C
@@ -169,7 +169,7 @@ new WildTrie({ wildcard: '*', globstar: '**' });
 ### Serialization
 
 - `.toJSON()` - Serializes trie structure to JSON format.
-- `.toString()` - Serializes trie structure to string in JSON format.
+- `.toString()` - Serializes the trie structure as a tree format.
 
 ### Inspection
 
@@ -204,119 +204,125 @@ npm test
 │  ├─ Can use the WildTrie class to structure a basic ACL instance
 │  │  ├─ An admin can read users
 │  │  │  ├─ A user can read users
-│  │  │  │  └─ ✔ passed 1.240109ms
-│  │  │  └─ ✔ passed 3.086946ms
+│  │  │  │  └─ ✔ passed 0.847317ms
+│  │  │  └─ ✔ passed 1.827469ms
 │  │  ├─ An admin can create users
 │  │  │  ├─ A user can not create users
-│  │  │  │  └─ ✔ passed 0.220605ms
-│  │  │  └─ ✔ passed 0.649937ms
-│  │  └─ ✔ passed 5.199427ms
+│  │  │  │  └─ ✔ passed 0.366054ms
+│  │  │  └─ ✔ passed 1.063366ms
+│  │  └─ ✔ passed 4.877404ms
 │  ├─ Can use branch wildcards
 │  │  ├─ An admin can read users
 │  │  │  ├─ A user can read users
-│  │  │  │  └─ ✔ passed 0.158969ms
+│  │  │  │  └─ ✔ passed 0.161938ms
 │  │  │  ├─ A guest can not read users
-│  │  │  │  └─ ✔ passed 0.361487ms
-│  │  │  └─ ✔ passed 1.86821ms
+│  │  │  │  └─ ✔ passed 0.248884ms
+│  │  │  └─ ✔ passed 0.879528ms
 │  │  ├─ An admin can create users
 │  │  │  ├─ A user can not create users
-│  │  │  │  └─ ✔ passed 0.284117ms
+│  │  │  │  └─ ✔ passed 0.303434ms
 │  │  │  ├─ A guest can not create users
-│  │  │  │  └─ ✔ passed 0.104069ms
-│  │  │  └─ ✔ passed 0.889338ms
+│  │  │  │  └─ ✔ passed 0.12622ms
+│  │  │  └─ ✔ passed 0.995169ms
 │  │  ├─ An admin has the permission to access all users
 │  │  │  ├─ A user do not have the permission to access all users
-│  │  │  │  └─ ✔ passed 0.090267ms
+│  │  │  │  └─ ✔ passed 0.096962ms
 │  │  │  ├─ A guest do not have the permission to access all users
-│  │  │  │  └─ ✔ passed 0.077373ms
-│  │  │  └─ ✔ passed 0.368223ms
+│  │  │  │  └─ ✔ passed 0.163484ms
+│  │  │  └─ ✔ passed 0.485246ms
 │  │  ├─ An admin can read resource A
 │  │  │  ├─ A user can read resource A
-│  │  │  │  └─ ✔ passed 0.241578ms
+│  │  │  │  └─ ✔ passed 0.149878ms
 │  │  │  ├─ A guest can read resource A
-│  │  │  │  └─ ✔ passed 0.165654ms
-│  │  │  └─ ✔ passed 0.708266ms
+│  │  │  │  └─ ✔ passed 0.080611ms
+│  │  │  └─ ✔ passed 0.497481ms
 │  │  ├─ An admin can create resource A
 │  │  │  ├─ A user can create resource A
-│  │  │  │  └─ ✔ passed 0.192916ms
+│  │  │  │  └─ ✔ passed 0.120758ms
 │  │  │  ├─ A guest can not create resource A
-│  │  │  │  └─ ✔ passed 0.185791ms
-│  │  │  └─ ✔ passed 0.748615ms
-│  │  └─ ✔ passed 5.287009ms
+│  │  │  │  └─ ✔ passed 0.080103ms
+│  │  │  └─ ✔ passed 0.453211ms
+│  │  └─ ✔ passed 4.044815ms
 │  ├─ Can use descendants wildcards to check permissions
 │  │  ├─ An admin has permissions
 │  │  │  ├─ A user has permissions
-│  │  │  │  └─ ✔ passed 0.302976ms
+│  │  │  │  └─ ✔ passed 0.14598ms
 │  │  │  ├─ A guest has no permissions
-│  │  │  │  └─ ✔ passed 0.086378ms
-│  │  │  └─ ✔ passed 1.08813ms
+│  │  │  │  └─ ✔ passed 0.075894ms
+│  │  │  └─ ✔ passed 0.691003ms
 │  │  ├─ An admin can read its personal settings
 │  │  │  ├─ A user can read its personal settings
-│  │  │  │  └─ ✔ passed 0.114525ms
+│  │  │  │  └─ ✔ passed 0.140849ms
 │  │  │  ├─ A guest can not read users settings
-│  │  │  │  └─ ✔ passed 0.095421ms
-│  │  │  └─ ✔ passed 0.45562ms
+│  │  │  │  └─ ✔ passed 0.119044ms
+│  │  │  └─ ✔ passed 0.485148ms
 │  │  ├─ An admin can read all users settings
 │  │  │  ├─ A user can not read all users settings
-│  │  │  │  └─ ✔ passed 0.106651ms
-│  │  │  └─ ✔ passed 0.241877ms
+│  │  │  │  └─ ✔ passed 0.175829ms
+│  │  │  └─ ✔ passed 0.34056ms
 │  │  ├─ An admin can read something
 │  │  │  ├─ A user can read something
-│  │  │  │  └─ ✔ passed 0.195543ms
+│  │  │  │  └─ ✔ passed 0.2139ms
 │  │  │  ├─ A user can read som personal settings
-│  │  │  │  └─ ✔ passed 0.270376ms
+│  │  │  │  └─ ✔ passed 1.30917ms
 │  │  │  ├─ A user can update some of its personal settings
-│  │  │  │  └─ ✔ passed 0.101225ms
-│  │  │  └─ ✔ passed 1.024645ms
+│  │  │  │  └─ ✔ passed 0.224445ms
+│  │  │  └─ ✔ passed 2.184856ms
 │  │  ├─ An admin can delete something
 │  │  │  ├─ A user can not delete something
-│  │  │  │  └─ ✔ passed 0.162041ms
-│  │  │  └─ ✔ passed 1.313648ms
-│  │  └─ ✔ passed 4.571666ms
+│  │  │  │  └─ ✔ passed 0.211477ms
+│  │  │  └─ ✔ passed 0.539043ms
+│  │  └─ ✔ passed 4.718736ms
 │  ├─ Can use descendants wildcards to declare permissions
 │  │  ├─ An admin has access to read personal settings
 │  │  │  ├─ A user has access to read personal settings
-│  │  │  │  └─ ✔ passed 0.172989ms
+│  │  │  │  └─ ✔ passed 0.115956ms
 │  │  │  ├─ A user has access to read nested personal settings
-│  │  │  │  └─ ✔ passed 0.326392ms
+│  │  │  │  └─ ✔ passed 0.170762ms
 │  │  │  ├─ A user has access to read multiple nested personal settings
-│  │  │  │  └─ ✔ passed 0.135568ms
+│  │  │  │  └─ ✔ passed 0.096136ms
 │  │  │  ├─ A user can not read all settings
-│  │  │  │  └─ ✔ passed 0.085933ms
+│  │  │  │  └─ ✔ passed 0.106284ms
 │  │  │  ├─ A user can not update personal settings
-│  │  │  │  └─ ✔ passed 0.169812ms
+│  │  │  │  └─ ✔ passed 0.099669ms
 │  │  │  ├─ A user can not update nested personal settings
-│  │  │  │  └─ ✔ passed 0.125649ms
-│  │  │  └─ ✔ passed 1.685842ms
-│  │  └─ ✔ passed 1.895308ms
+│  │  │  │  └─ ✔ passed 0.086438ms
+│  │  │  └─ ✔ passed 1.203759ms
+│  │  └─ ✔ passed 1.411007ms
 │  ├─ Can reference a shared trie
 │  │  ├─ A creator references an editor
-│  │  │  └─ ✔ passed 0.332086ms
+│  │  │  └─ ✔ passed 0.114044ms
 │  │  ├─ A creator references a cleaner
-│  │  │  └─ ✔ passed 0.193131ms
+│  │  │  └─ ✔ passed 0.153974ms
 │  │  ├─ A creator references a reader
-│  │  │  └─ ✔ passed 0.398749ms
+│  │  │  └─ ✔ passed 0.202553ms
 │  │  ├─ An editor references a reader
-│  │  │  └─ ✔ passed 0.22135ms
+│  │  │  └─ ✔ passed 0.146667ms
 │  │  ├─ A cleaner references a reader
-│  │  │  └─ ✔ passed 0.127057ms
+│  │  │  └─ ✔ passed 0.243966ms
 │  │  ├─ A reader does not reference an editor
-│  │  │  └─ ✔ passed 0.171091ms
+│  │  │  └─ ✔ passed 0.119554ms
 │  │  ├─ A reader does not reference a cleaner
-│  │  │  └─ ✔ passed 0.169763ms
+│  │  │  └─ ✔ passed 0.082625ms
 │  │  ├─ A reader does not reference a creator
-│  │  │  └─ ✔ passed 0.100613ms
+│  │  │  └─ ✔ passed 0.102876ms
 │  │  ├─ An editor does not reference a creator
-│  │  │  └─ ✔ passed 0.140215ms
+│  │  │  └─ ✔ passed 0.120406ms
 │  │  ├─ An editor does not reference a cleaner
-│  │  │  └─ ✔ passed 0.137957ms
+│  │  │  └─ ✔ passed 0.078773ms
 │  │  ├─ A cleaner does not reference a creator
-│  │  │  └─ ✔ passed 0.078038ms
+│  │  │  └─ ✔ passed 0.085165ms
 │  │  ├─ A cleaner does not reference an editor
-│  │  │  └─ ✔ passed 0.082137ms
-│  │  └─ ✔ passed 3.745203ms
-│  └─ ✔ suite passed 21.346868ms
-└─ ✔ suite passed 21.977771ms
+│  │  │  └─ ✔ passed 0.087533ms
+│  │  └─ ✔ passed 2.590132ms
+│  └─ ✔ suite passed 18.649088ms
+├─ Transform
+│  ├─ Can use toJSON
+│  │  └─ ✔ passed 0.375166ms
+│  ├─ Can use toString
+│  │  └─ ✔ passed 0.476709ms
+│  └─ ✔ suite passed 0.977785ms
+└─ ✔ suite passed 20.569422ms
 
 
 ──────────────────────────────── ⋅⋆ Coverage ⋆⋅ ────────────────────────────────
@@ -324,21 +330,21 @@ npm test
 
 Files                                            Coverage   Branches   Functions
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.js                                              80%        85%         63%
+index.js                                              86%        80%         77%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 index.test.js                                        100%       100%        100%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Total                                                 89%        94%         90%
+Total                                                 92%        90%         93%
 
 
 ───────────────────────────────── ⋅⋆ Summary ⋆⋅ ────────────────────────────────
 
 
-Suites                                                                         2
+Suites                                                                         3
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Tests                                                                         57
+Tests                                                                         59
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Passed                                                                        57
+Passed                                                                        59
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 Failed                                                                         0
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌

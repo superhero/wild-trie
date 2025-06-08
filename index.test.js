@@ -331,4 +331,37 @@ suite('@superhero/wild-trie', () =>
       })
     })
   })
+
+  suite('Transform', () =>
+  {
+    const acl = new WildTrie()
+
+    acl.declare('admin', 'users', 'read')
+    acl.declare('admin', 'users', 'create')
+    acl.declare('user',  'users', 'read')
+
+    const assert = contextualAssert({ acl })
+
+    test('Can use toJSON', () =>
+    {
+      const json = acl.toJSON()
+
+      assert.ok(json?.admin?.users.read,    'An admin should have access to read users')
+      assert.ok(json?.admin?.users.create,  'An admin should have access to create users')
+      assert.ok(json?.user?.users.read,     'A user should have access to read users')
+    })
+
+    test('Can use toString', () =>
+    {
+      const string = acl.toString()
+
+      assert.includes(string.split('\n'), '├─ admin',         'The string representation should include "├─ admin"')
+      assert.includes(string.split('\n'), '│  └─ users',      'The string representation should include "│  └─ users"')
+      assert.includes(string.split('\n'), '│     ├─ read',    'The string representation should include "│     ├─ read"')
+      assert.includes(string.split('\n'), '│     └─ create',  'The string representation should include "│     └─ create"')
+      assert.includes(string.split('\n'), '└─ user',          'The string representation should include "└─ user"')
+      assert.includes(string.split('\n'), '   └─ users',      'The string representation should include "   └─ users"')
+      assert.includes(string.split('\n'), '      └─ read',    'The string representation should include "      └─ read"')
+    })
+  })
 })
