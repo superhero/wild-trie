@@ -156,20 +156,22 @@ new WildTrie({ wildcard: '*', globstar: '**' });
 
 ### Methods
 
-- `.declare(...path)` - Declares and returns the trie node for the specified path.
-- `.define(value)` - Defines a value at the trie node.
-- `.delete(...path)` - Deletes the branch at the specified path.
-- `.descendants(...path)` - Retrieves all descendant branches and sub-tries from the specified path.
-- `.get(...path)` - Returns all the defined values as an array at the specified path.
-- `.has(...path)` - Checks if the path exists.
-- `.node(...path)` - Retrieves the specified trie node at the provided direct path.
-- `.reference(branch, trie)` - Creates a reference from the current node to another trie node.
-- `.traverse(...path)` - Traverses the trie structure using wildcards, returns tries that match the specified path. 
+- `.declare(...path)`         - Declares and returns the trie node for the specified path.
+- `.define(value)`            - Defines a value at the trie node.
+- `.delete(...path)`          - Deletes the branch at the specified path.
+- `.descendants(...path)`     - Retrieves all descendant branches and sub-tries from the specified path.
+- `.has(...path)`             - Checks if the path exists.
+- `.node(...path)`            - Retrieves the specified trie node at the provided direct path.
+- `.reference(branch, trie)`  - Creates a reference from the current node to another trie node.
+- `.leafs(...path)`           - Traverses the trie structure using wildcards, returns leaf-tries that match the specified path.
+- `.leafValues(...path)`      - Returns defined leaf values at the specified path.
+- `.trail(...path)`           - Traverses the trie structure in the same way `leafs` method does, returns the leaf nodes, all ancestors.
+- `.trailValues(...path)`     - Returns defined values in all the nodes that are ancestors to the specified path, including the leafs.
 
 ### Serialization
 
-- `.toJSON()` - Serializes trie structure to JSON format.
-- `.toString()` - Serializes the trie structure as a tree format.
+- `.toJSON()`     - Serializes trie structure to JSON format.
+- `.toString()`   - Serializes the trie structure as a tree format.
 
 ### Inspection
 
@@ -179,9 +181,9 @@ new WildTrie({ wildcard: '*', globstar: '**' });
 
 The class throws descriptive errors when improper configurations or references occur, aiding debugging and validation.
 
-- **TypeError** - `E_WILD_TRIE_CONFIG` - When assigning a configurations you must use an Object.
-- **TypeError** - `E_WILD_TRIE_REFERENCE_BRANCH` - The branch must be defined when referencing a trie.
-- **TypeError** - `E_WILD_TRIE_REFERENCE_INSTANCE` - The referenced trie must be an instance of WildTrie.
+- **TypeError**      - `E_WILD_TRIE_CONFIG` - When assigning a configurations you must use an Object.
+- **TypeError**      - `E_WILD_TRIE_REFERENCE_BRANCH` - The branch must be defined when referencing a trie.
+- **TypeError**      - `E_WILD_TRIE_REFERENCE_INSTANCE` - The referenced trie must be an instance of WildTrie.
 - **ReferenceError** - `E_WILD_TRIE_REFERENCE_CIRCULAR` - Can not reference a trie if it creates a circular path.
 
 ## Test Suite
