@@ -147,11 +147,11 @@ reader.has('**', 'read')   // true
 
 ### Constructor
 
-The constructor allows to configure what symbols are used to represent wildcards.
+The constructor provides an ability to declare a `WildTrie` structure from the provided construction value.
 
 ```javascript
-// Defaults if not configurations are passed are set to: `*` and `**`
-new WildTrie({ wildcard: '*', globstar: '**' });
+const trie = new WildTrie({ foo: { bar: { baz: { qux: 'foobar' } } } })
+trie.node('foo', 'bar', 'baz', 'qux').value // 'foobar'
 ```
 
 ### Methods
@@ -201,152 +201,117 @@ npm test
 ────────────────────────────────── ⋅⋆ Suite ⋆⋅ ─────────────────────────────────
 
 
-@superhero/wild-trie
-├─ Can use the WildTrie class to structure an ACL instance
-│  ├─ Can use the WildTrie class to structure a basic ACL instance
-│  │  ├─ An admin can read users
-│  │  │  ├─ A user can read users
-│  │  │  │  └─ ✔ passed 0.847317ms
-│  │  │  └─ ✔ passed 1.827469ms
-│  │  ├─ An admin can create users
-│  │  │  ├─ A user can not create users
-│  │  │  │  └─ ✔ passed 0.366054ms
-│  │  │  └─ ✔ passed 1.063366ms
-│  │  └─ ✔ passed 4.877404ms
-│  ├─ Can use branch wildcards
-│  │  ├─ An admin can read users
-│  │  │  ├─ A user can read users
-│  │  │  │  └─ ✔ passed 0.161938ms
-│  │  │  ├─ A guest can not read users
-│  │  │  │  └─ ✔ passed 0.248884ms
-│  │  │  └─ ✔ passed 0.879528ms
-│  │  ├─ An admin can create users
-│  │  │  ├─ A user can not create users
-│  │  │  │  └─ ✔ passed 0.303434ms
-│  │  │  ├─ A guest can not create users
-│  │  │  │  └─ ✔ passed 0.12622ms
-│  │  │  └─ ✔ passed 0.995169ms
-│  │  ├─ An admin has the permission to access all users
-│  │  │  ├─ A user do not have the permission to access all users
-│  │  │  │  └─ ✔ passed 0.096962ms
-│  │  │  ├─ A guest do not have the permission to access all users
-│  │  │  │  └─ ✔ passed 0.163484ms
-│  │  │  └─ ✔ passed 0.485246ms
-│  │  ├─ An admin can read resource A
-│  │  │  ├─ A user can read resource A
-│  │  │  │  └─ ✔ passed 0.149878ms
-│  │  │  ├─ A guest can read resource A
-│  │  │  │  └─ ✔ passed 0.080611ms
-│  │  │  └─ ✔ passed 0.497481ms
-│  │  ├─ An admin can create resource A
-│  │  │  ├─ A user can create resource A
-│  │  │  │  └─ ✔ passed 0.120758ms
-│  │  │  ├─ A guest can not create resource A
-│  │  │  │  └─ ✔ passed 0.080103ms
-│  │  │  └─ ✔ passed 0.453211ms
-│  │  └─ ✔ passed 4.044815ms
-│  ├─ Can use descendants wildcards to check permissions
-│  │  ├─ An admin has permissions
-│  │  │  ├─ A user has permissions
-│  │  │  │  └─ ✔ passed 0.14598ms
-│  │  │  ├─ A guest has no permissions
-│  │  │  │  └─ ✔ passed 0.075894ms
-│  │  │  └─ ✔ passed 0.691003ms
-│  │  ├─ An admin can read its personal settings
-│  │  │  ├─ A user can read its personal settings
-│  │  │  │  └─ ✔ passed 0.140849ms
-│  │  │  ├─ A guest can not read users settings
-│  │  │  │  └─ ✔ passed 0.119044ms
-│  │  │  └─ ✔ passed 0.485148ms
-│  │  ├─ An admin can read all users settings
-│  │  │  ├─ A user can not read all users settings
-│  │  │  │  └─ ✔ passed 0.175829ms
-│  │  │  └─ ✔ passed 0.34056ms
-│  │  ├─ An admin can read something
-│  │  │  ├─ A user can read something
-│  │  │  │  └─ ✔ passed 0.2139ms
-│  │  │  ├─ A user can read som personal settings
-│  │  │  │  └─ ✔ passed 1.30917ms
-│  │  │  ├─ A user can update some of its personal settings
-│  │  │  │  └─ ✔ passed 0.224445ms
-│  │  │  └─ ✔ passed 2.184856ms
-│  │  ├─ An admin can delete something
-│  │  │  ├─ A user can not delete something
-│  │  │  │  └─ ✔ passed 0.211477ms
-│  │  │  └─ ✔ passed 0.539043ms
-│  │  └─ ✔ passed 4.718736ms
-│  ├─ Can use descendants wildcards to declare permissions
-│  │  ├─ An admin has access to read personal settings
-│  │  │  ├─ A user has access to read personal settings
-│  │  │  │  └─ ✔ passed 0.115956ms
-│  │  │  ├─ A user has access to read nested personal settings
-│  │  │  │  └─ ✔ passed 0.170762ms
-│  │  │  ├─ A user has access to read multiple nested personal settings
-│  │  │  │  └─ ✔ passed 0.096136ms
-│  │  │  ├─ A user can not read all settings
-│  │  │  │  └─ ✔ passed 0.106284ms
-│  │  │  ├─ A user can not update personal settings
-│  │  │  │  └─ ✔ passed 0.099669ms
-│  │  │  ├─ A user can not update nested personal settings
-│  │  │  │  └─ ✔ passed 0.086438ms
-│  │  │  └─ ✔ passed 1.203759ms
-│  │  └─ ✔ passed 1.411007ms
-│  ├─ Can reference a shared trie
-│  │  ├─ A creator references an editor
-│  │  │  └─ ✔ passed 0.114044ms
-│  │  ├─ A creator references a cleaner
-│  │  │  └─ ✔ passed 0.153974ms
-│  │  ├─ A creator references a reader
-│  │  │  └─ ✔ passed 0.202553ms
-│  │  ├─ An editor references a reader
-│  │  │  └─ ✔ passed 0.146667ms
-│  │  ├─ A cleaner references a reader
-│  │  │  └─ ✔ passed 0.243966ms
-│  │  ├─ A reader does not reference an editor
-│  │  │  └─ ✔ passed 0.119554ms
-│  │  ├─ A reader does not reference a cleaner
-│  │  │  └─ ✔ passed 0.082625ms
-│  │  ├─ A reader does not reference a creator
-│  │  │  └─ ✔ passed 0.102876ms
-│  │  ├─ An editor does not reference a creator
-│  │  │  └─ ✔ passed 0.120406ms
-│  │  ├─ An editor does not reference a cleaner
-│  │  │  └─ ✔ passed 0.078773ms
-│  │  ├─ A cleaner does not reference a creator
-│  │  │  └─ ✔ passed 0.085165ms
-│  │  ├─ A cleaner does not reference an editor
-│  │  │  └─ ✔ passed 0.087533ms
-│  │  └─ ✔ passed 2.590132ms
-│  └─ ✔ suite passed 18.649088ms
-├─ Transform
-│  ├─ Can use toJSON
-│  │  └─ ✔ passed 0.375166ms
-│  ├─ Can use toString
-│  │  └─ ✔ passed 0.476709ms
-│  └─ ✔ suite passed 0.977785ms
-└─ ✔ suite passed 20.569422ms
+@superhero/wild-trie 
+├─ Can declare a WildTrie instance from the constructor 
+│  ├─ Can declare a basic WildTrie instance ✔ 1.157ms
+│  ├─ Can declare a WildTrie instance with a wildcard ✔ 0.173ms
+│  ├─ Can declare a WildTrie instance with a specified string value ✔ 0.138ms
+│  ├─ Can declare a WildTrie instance with a specified function value ✔ 0.160ms
+│  └─ ✔ 3.725ms
+├─ Can use the WildTrie class to structure an ACL instance 
+│  ├─ Can use the WildTrie class to structure a basic ACL instance 
+│  │  ├─ An admin can read users 
+│  │  │  ├─ A user can read users ✔ 0.272ms
+│  │  │  └─ ✔ 0.984ms
+│  │  ├─ An admin can create users 
+│  │  │  ├─ A user can not create users ✔ 0.213ms
+│  │  │  └─ ✔ 0.651ms
+│  │  └─ ✔ 2.248ms
+│  ├─ Can use branch wildcards 
+│  │  ├─ An admin can read users 
+│  │  │  ├─ A user can read users ✔ 0.408ms
+│  │  │  ├─ A guest can not read users ✔ 0.121ms
+│  │  │  └─ ✔ 0.818ms
+│  │  ├─ An admin can create users 
+│  │  │  ├─ A user can not create users ✔ 0.250ms
+│  │  │  ├─ A guest can not create users ✔ 0.087ms
+│  │  │  └─ ✔ 0.538ms
+│  │  ├─ An admin has the permission to access all users 
+│  │  │  ├─ A user do not have the permission to access all users ✔ 0.095ms
+│  │  │  ├─ A guest do not have the permission to access all users ✔ 0.098ms
+│  │  │  └─ ✔ 0.380ms
+│  │  ├─ An admin can read resource A 
+│  │  │  ├─ A user can read resource A ✔ 0.093ms
+│  │  │  ├─ A guest can read resource A ✔ 0.095ms
+│  │  │  └─ ✔ 0.402ms
+│  │  ├─ An admin can create resource A 
+│  │  │  ├─ A user can create resource A ✔ 0.108ms
+│  │  │  ├─ A guest can not create resource A ✔ 0.091ms
+│  │  │  └─ ✔ 0.413ms
+│  │  └─ ✔ 3.144ms
+│  ├─ Can use descendants wildcards to check permissions 
+│  │  ├─ An admin has permissions 
+│  │  │  ├─ A user has permissions ✔ 0.133ms
+│  │  │  ├─ A guest has no permissions ✔ 0.083ms
+│  │  │  └─ ✔ 1.339ms
+│  │  ├─ An admin can read its personal settings 
+│  │  │  ├─ A user can read its personal settings ✔ 0.094ms
+│  │  │  ├─ A guest can not read users settings ✔ 0.076ms
+│  │  │  └─ ✔ 0.355ms
+│  │  ├─ An admin can read all users settings 
+│  │  │  ├─ A user can not read all users settings ✔ 0.096ms
+│  │  │  └─ ✔ 0.222ms
+│  │  ├─ An admin can read something 
+│  │  │  ├─ A user can read something ✔ 0.226ms
+│  │  │  ├─ A user can read som personal settings ✔ 0.099ms
+│  │  │  ├─ A user can update some of its personal settings ✔ 0.103ms
+│  │  │  └─ ✔ 0.691ms
+│  │  ├─ An admin can delete something 
+│  │  │  ├─ A user can not delete something ✔ 0.213ms
+│  │  │  └─ ✔ 0.358ms
+│  │  └─ ✔ 3.360ms
+│  ├─ Can use descendants wildcards to declare permissions 
+│  │  ├─ An admin has access to read personal settings 
+│  │  │  ├─ A user has access to read personal settings ✔ 0.124ms
+│  │  │  ├─ A user has access to read nested personal settings ✔ 0.244ms
+│  │  │  ├─ A user has access to read multiple nested personal settings ✔ 0.216ms
+│  │  │  ├─ A user can not read all settings ✔ 0.121ms
+│  │  │  ├─ A user can not update personal settings ✔ 0.115ms
+│  │  │  ├─ A user can not update nested personal settings ✔ 0.139ms
+│  │  │  └─ ✔ 1.504ms
+│  │  └─ ✔ 1.703ms
+│  ├─ Can reference a shared trie 
+│  │  ├─ A creator references an editor ✔ 0.117ms
+│  │  ├─ A creator references a cleaner ✔ 0.095ms
+│  │  ├─ A creator references a reader ✔ 0.095ms
+│  │  ├─ An editor references a reader ✔ 0.101ms
+│  │  ├─ A cleaner references a reader ✔ 0.162ms
+│  │  ├─ A reader does not reference an editor ✔ 0.179ms
+│  │  ├─ A reader does not reference a cleaner ✔ 0.102ms
+│  │  ├─ A reader does not reference a creator ✔ 0.093ms
+│  │  ├─ An editor does not reference a creator ✔ 0.096ms
+│  │  ├─ An editor does not reference a cleaner ✔ 0.097ms
+│  │  ├─ A cleaner does not reference a creator ✔ 0.107ms
+│  │  ├─ A cleaner does not reference an editor ✔ 0.096ms
+│  │  └─ ✔ 2.344ms
+│  └─ ✔ 13.044ms
+├─ Transform 
+│  ├─ Can use toJSON ✔ 0.384ms
+│  ├─ Can use toString ✔ 0.603ms
+│  └─ ✔ 1.122ms
+└─ ✔ 18.546ms
 
 
 ──────────────────────────────── ⋅⋆ Coverage ⋆⋅ ────────────────────────────────
 
 
-Files                                            Coverage   Branches   Functions
+Files                                            Coverage   Functions   Branches
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.js                                              86%        80%         77%
+index.js                                              84%         80%        85%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.test.js                                        100%       100%        100%
+index.test.js                                        100%        100%       100%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Total                                                 92%        90%         93%
+Total                                                 90%        91%         93%
 
 
 ───────────────────────────────── ⋅⋆ Summary ⋆⋅ ────────────────────────────────
 
 
-Suites                                                                         3
+Suites                                                                         4
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Tests                                                                         59
+Tests                                                                         63
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Passed                                                                        59
+Passed                                                                        63
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 Failed                                                                         0
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌

@@ -6,24 +6,62 @@ export default class WildTrie
   static LEAF = Symbol('LEAF')
 
   /**
-   * Assign custom configurations to the WildTrie instance.
-   * @param {Object} [config]             - Configurations for the WildTrie.
-   * @param {*} [config.wildcard = '*']   - Wildcard that match any branch.
-   * @param {*} [config.globstar = '**']  - Wildcard that match any descendant branch.
+   * Creates a new `WildTrie` instance.
+   * @param {*} [arg] - Optionally declares a structure from the provided value.
    */
-  constructor(config)
+  constructor(arg)
   {
-    config = Object.assign(
+    if(arg !== undefined)
+    {
+      return WildTrie.from(arg)
+    }
+
+    const config = 
     {
       wildcard : '*', 
       globstar : '**' 
-    }, config)
+    }
 
     Object.defineProperties(this, 
     {
       'branches' : { value: new Map() },
       'config'   : { value: config },
     })
+  }
+
+  /**
+   * A factory method to create a `WildTrie` instance from the provided value.
+   * @param {*} arg 
+   * @returns {WildTrie} - Returns a new `WildTrie` instance.
+   */
+  static from(arg)
+  {
+    if(arg instanceof WildTrie)
+    {
+      return arg
+    }
+
+    const trie = new this()
+
+    switch(Object.prototype.toString.call(arg))
+    {
+      case '[object Object]':
+      case '[object Array]':
+      {
+        for(const branch in arg)
+        {
+          trie.branches.set(branch, this.from(arg[branch]))
+        }
+
+        break
+      }
+      default:
+      {
+        trie.define(arg)
+      }
+    }
+
+    return trie
   }
 
   /**
@@ -38,7 +76,7 @@ export default class WildTrie
     {
       if(false === this.branches.has(branch))
       {
-        this.branches.set(branch, new this.constructor(this.config))
+        this.branches.set(branch, new this.constructor())
       }
 
       return this.branches.get(branch).declare(...path)

@@ -4,6 +4,48 @@ import { suite, test }  from 'node:test'
 
 suite('@superhero/wild-trie', () =>
 {
+  suite('Can declare a WildTrie instance from the constructor', () =>
+  {
+    test('Can declare a basic WildTrie instance', async sub =>
+    {
+      const trie = new WildTrie({ foo: { bar: { baz: { qux: 'foobar' } } } })
+
+      const assert = contextualAssert({ trie })
+
+      assert.strictEqual(trie.node('foo', 'bar', 'baz', 'qux').value, 'foobar', 'The value of the node should be "foobar"')
+    })
+
+    test('Can declare a WildTrie instance with a wildcard', async sub =>
+    {
+      const trie = new WildTrie({ foo: { bar: { '*': 'qux' } } })
+
+      const assert = contextualAssert({ trie })
+
+      assert.strictEqual(trie.node('foo', 'bar', '*').value, 'qux', 'The value of the node should be "qux"')
+    })
+
+    test('Can declare a WildTrie instance with a specified string value', async sub =>
+    {
+      const trie = new WildTrie('foobar')
+
+      const assert = contextualAssert({ trie })
+
+      assert.strictEqual(trie.value, 'foobar', 'The value of the node should be "foobar"')
+    })
+
+    test('Can declare a WildTrie instance with a specified function value', async sub =>
+    {
+      const callback = () => 'foobar'
+
+      const trie = new WildTrie(callback)
+
+      const assert = contextualAssert({ trie })
+
+      assert.strictEqual(trie.value, callback, 'The value of the node should be the callback function')
+      assert.strictEqual(trie.value(), 'foobar', 'The value of the node should return "foobar" when called')
+    })
+  })
+
   suite('Can use the WildTrie class to structure an ACL instance', () =>
   {
     test('Can use the WildTrie class to structure a basic ACL instance', async sub =>
