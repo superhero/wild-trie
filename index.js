@@ -131,25 +131,6 @@ export default class WildTrie
   }
 
   /**
-   * Returns an iterable of all branches in the trie, including their associated `WildTrie` instances.
-   * If a path is provided, it will return the entries of the specified branch trie.
-   * Fallback to an empty iterable if the path is not declared.
-   * @param {...*} [path] - The path to retrieve the entries from.
-   * @returns {IterableIterator<[*, WildTrie]>} - An iterable of all direct branch entries.
-   */
-  entries(...path)
-  {
-    if(path.length)
-    {
-      return this.get(...path)?.entries() ?? Iterable.from([])
-    }
-    else
-    {
-      return this.#branches.entries()
-    }
-  }
-
-  /**
    * Returns the specific trie-node that matches the provided path or undefined if the path
    * doesn't have a specified trie-node.
    * @param {...*} [path]
@@ -179,24 +160,6 @@ export default class WildTrie
   has(...path)
   {
     return this.query(...path).next().done === false
-  }
-
-  /**
-   * Returns an iterable of all branch keys in the trie of the specified path.
-   * Fallback to an empty iterable if the path is not declared.
-   * @param {...*} [path] - The path to retrieve the branch keys from.
-   * @returns {IterableIterator<*>} - An iterable of all direct branch keys in the trie.
-   */
-  keys(...path)
-  {
-    if(path.length)
-    {
-      return this.get(...path)?.keys() ?? Iterable.from([])
-    }
-    else
-    {
-      return this.#branches.keys()
-    }
   }
 
   /**
@@ -331,25 +294,6 @@ export default class WildTrie
   }
 
   /**
-   * Returns an iterable of all branches in the trie.
-   * If a path is provided, it will return the values of the specified branch trie.
-   * Fallback to an empty iterable if the path is not declared.
-   * @param {...*} [path] - The path to retrieve the values from.
-   * @returns {Iterable<WildTrie>} - An iterable of all direct branches of the trie.
-   */
-  values(...path)
-  {
-    if(path.length)
-    {
-      return this.get(...path)?.values() ?? Iterable.from([])
-    }
-    else
-    {
-      return this.#branches.values()
-    }
-  }
-
-  /**
    * Custom inspect method for the WildTrie class, allowing it to be inspected in a more readable
    * format when using `util.inspect`.
    * @param {number} [depth]            - The depth to which the trie should be serialized.
@@ -401,30 +345,65 @@ export default class WildTrie
   }
 
   /**
-   * Returns a generator that yields all the leaf nodes of the trie that match the specified path.
-   * 
-   * If the provided path doesn't exist, then an empty iteratot will be returned.
-   * 
-   * If the path branch is specific, it will return the trie-node that match that branch.
-   * 
-   * If a path branch is defined using a @see config.wildcard, it will return all trie-nodes of all
-   * the defined branches of the trie. 
-   * 
-   * If a path branch is defined using a @see config.globstar, it will return all the
-   * descendants of the trie, including all trie-nodes of all the defined branches of the trie.
-   * 
-   * @param {*} [branch]
-   * @param {...*} [path]
-   * @yields {WildTrie} - Each unique leaf node of the provided path.
+   * Returns a generator of all the direct branch-entries of the trie.
+   * If a path is provided, it will return the entries of the matched trie-node.
+   * @param {...*} [path]     - The path to retrieve the entries from.
+   * @yields {[*, WildTrie]}  - Each entry is a tuple of the branch-key and its associated `WildTrie` instance.
    */
-  * query(...path)
+  * entries(...path)
   {
-    for(const [ trie, state ] of this.walk(...path))
+    if(path.length)
     {
-      if(WildTrie.LEAF === state)
+      for(const trie of this.query(...path))
       {
-        yield trie
+        yield * trie.entries()
       }
+    }
+    else
+    {
+      yield * this.#branches.entries()
+    }
+  }
+
+  /**
+   * Returns a generator of all the direct branch-keys in the trie.
+   * If a path is provided, it will return the branch-keys of the matched trie-node.
+   * @param {...*} [path] - The path to retrieve the branch keys from.
+   * @yields {*}          - The direct branch-keys of the specified path.
+   */
+  * keys(...path)
+  {
+    if(path.length)
+    {
+      for(const trie of this.query(...path))
+      {
+        yield * trie.keys()
+      }
+    }
+    else
+    {
+      yield * this.#branches.keys()
+    }
+  }
+
+  /**
+   * Returns a generator of all the direct branched trie-nodes.
+   * If a path is provided, it will return the values of the specified branch trie.
+   * @param {...*} [path] - The path to retrieve the values from.
+   * @yields {WildTrie}   - The branched trie-nodes of the specified path.
+   */
+  * values(...path)
+  {
+    if(path.length)
+    {
+      for(const trie of this.query(...path))
+      {
+        yield * trie.values()
+      }
+    }
+    else
+    {
+      yield * this.#branches.values()
     }
   }
 
@@ -458,6 +437,34 @@ export default class WildTrie
             break
           }
         }
+      }
+    }
+  }
+
+  /**
+   * Returns a generator that yields all the leaf nodes of the trie that match the specified path.
+   * 
+   * If the provided path doesn't exist, then an empty iteratot will be returned.
+   * 
+   * If the path branch is specific, it will return the trie-node that match that branch.
+   * 
+   * If a path branch is defined using a @see config.wildcard, it will return all trie-nodes of all
+   * the defined branches of the trie. 
+   * 
+   * If a path branch is defined using a @see config.globstar, it will return all the
+   * descendants of the trie, including all trie-nodes of all the defined branches of the trie.
+   * 
+   * @param {*} [branch]
+   * @param {...*} [path]
+   * @yields {WildTrie} - Each unique leaf node of the provided path.
+   */
+  * query(...path)
+  {
+    for(const [ trie, state ] of this.walk(...path))
+    {
+      if(WildTrie.LEAF === state)
+      {
+        yield trie
       }
     }
   }

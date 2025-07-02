@@ -172,8 +172,8 @@ trie.get('foo', 'bar', 'baz', 'qux').state // 'foobar'
 - `.has(...path)`           - Checks if the branch-path exists.
 - `.get(...path)`           - Retrieves the specified trie-node at the provided direct branch-path.
 - `.set(...path, trie)`     - Set a lazyloaded trie-node at the specified branch-path.
+- `.trace(...path)`         - Returns a traced result from the resulting leaf nodes including all its ancestors, including the root.
 - `.query(...path)`         - Traverses the trie structure using wildcards, returns leaf-tries that match the specified branch-path.
-- `.trace(...path)`         - Traverses the trie structure in the same way the `query` method does, returns a traced result from the matched leaf nodes including all the ancestors.
 
 ### Serialization
 
