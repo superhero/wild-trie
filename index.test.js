@@ -4,36 +4,36 @@ import { suite, test }  from 'node:test'
 
 suite('@superhero/wild-trie', () =>
 {
-  suite('Can declare a WildTrie instance from the constructor', () =>
+  suite('Can define a WildTrie instance from the constructor', () =>
   {
-    test('Can declare a basic WildTrie instance', async sub =>
+    test('Can define a basic WildTrie instance', async sub =>
     {
       const trie = new WildTrie({ foo: { bar: { baz: { qux: 'foobar' } } } })
 
       const assert = contextualAssert({ trie })
 
-      assert.strictEqual(trie.node('foo', 'bar', 'baz', 'qux').value, 'foobar', 'The value of the node should be "foobar"')
+      assert.strictEqual(trie.get('foo', 'bar', 'baz', 'qux').state, 'foobar', 'The state of the node should be "foobar"')
     })
 
-    test('Can declare a WildTrie instance with a wildcard', async sub =>
+    test('Can define a WildTrie instance with a wildcard', async sub =>
     {
       const trie = new WildTrie({ foo: { bar: { '*': 'qux' } } })
 
       const assert = contextualAssert({ trie })
 
-      assert.strictEqual(trie.node('foo', 'bar', '*').value, 'qux', 'The value of the node should be "qux"')
+      assert.strictEqual(trie.get('foo', 'bar', '*').state, 'qux', 'The state of the node should be "qux"')
     })
 
-    test('Can declare a WildTrie instance with a specified string value', async sub =>
+    test('Can define a WildTrie instance with a specified string state', async sub =>
     {
       const trie = new WildTrie('foobar')
 
       const assert = contextualAssert({ trie })
 
-      assert.strictEqual(trie.value, 'foobar', 'The value of the node should be "foobar"')
+      assert.strictEqual(trie.state, 'foobar', 'The state of the node should be "foobar"')
     })
 
-    test('Can declare a WildTrie instance with a specified function value', async sub =>
+    test('Can define a WildTrie instance with a specified function state', async sub =>
     {
       const callback = () => 'foobar'
 
@@ -41,8 +41,8 @@ suite('@superhero/wild-trie', () =>
 
       const assert = contextualAssert({ trie })
 
-      assert.strictEqual(trie.value, callback, 'The value of the node should be the callback function')
-      assert.strictEqual(trie.value(), 'foobar', 'The value of the node should return "foobar" when called')
+      assert.strictEqual(trie.state, callback, 'The state of the node should be the callback function')
+      assert.strictEqual(trie.state(), 'foobar', 'The state of the node should return "foobar" when called')
     })
   })
 
@@ -52,9 +52,9 @@ suite('@superhero/wild-trie', () =>
     {
       const acl = new WildTrie()
 
-      acl.declare('admin', 'users', 'read')
-      acl.declare('admin', 'users', 'create')
-      acl.declare('user',  'users', 'read')
+      acl.add('admin', 'users', 'read')
+      acl.add('admin', 'users', 'create')
+      acl.add('user',  'users', 'read')
 
       const assert = contextualAssert({ acl })
 
@@ -83,12 +83,12 @@ suite('@superhero/wild-trie', () =>
     {
       const acl = new WildTrie()
 
-      acl.declare('admin', '*', '*')
+      acl.add('admin', '*', '*')
 
-      acl.declare('user', 'users', 'read')
-      acl.declare('user', 'resource-A', '*')
+      acl.add('user', 'users', 'read')
+      acl.add('user', 'resource-A', '*')
 
-      acl.declare('guest', 'resource-A', 'read')
+      acl.add('guest', 'resource-A', 'read')
 
       const assert = contextualAssert({ acl })
 
@@ -172,9 +172,9 @@ suite('@superhero/wild-trie', () =>
     {
       const acl = new WildTrie()
 
-      acl.declare('admin', '*', '*', '*', '*', '*')
-      acl.declare('user', 'users', 'settings', 'personal', 'read')
-      acl.declare('user', 'users', 'settings', 'personal', 'avatar', 'update')
+      acl.add('admin', '*', '*', '*', '*', '*')
+      acl.add('user', 'users', 'settings', 'personal', 'read')
+      acl.add('user', 'users', 'settings', 'personal', 'avatar', 'update')
 
       const assert = contextualAssert({ acl })
 
@@ -249,12 +249,12 @@ suite('@superhero/wild-trie', () =>
       })
     })
 
-    test('Can use descendants wildcards to declare permissions', async sub =>
+    test('Can use descendants wildcards to add permissions', async sub =>
     {
       const acl = new WildTrie()
 
-      acl.declare('admin', '**')
-      acl.declare('user', 'users', 'settings', 'personal', '**', 'read')
+      acl.add('admin', '**')
+      acl.add('user', 'users', 'settings', 'personal', '**', 'read')
 
       const assert = contextualAssert({ acl })
 
@@ -298,9 +298,9 @@ suite('@superhero/wild-trie', () =>
     {
       const acl = new WildTrie()
 
-      acl.declare('admin', 'users', 'read')
-      acl.declare('admin', 'users', 'create')
-      acl.declare('user',  'users', 'read')
+      acl.add('admin', 'users', 'read')
+      acl.add('admin', 'users', 'create')
+      acl.add('user',  'users', 'read')
 
       const assert = contextualAssert({ acl })
 
@@ -322,7 +322,7 @@ suite('@superhero/wild-trie', () =>
           mutated         = acl.delete('admin', 'users')
 
         assert.strictEqual(mutated, true, 'Should return true when deleting "admin.users" branch')
-        assert.strictEqual(acl.node('admin').branches.has('users'), false, '"admin.users" branch should have been removed')
+        assert.strictEqual(acl.get('admin').has('users'), false, '"admin.users" branch should have been removed')
         assert.strictEqual(acl.size, preMutationSize - 2, 'Size should have decreased by 2 nodes ("admin.users" and "admin.users.create")')
       })
 
@@ -352,17 +352,13 @@ suite('@superhero/wild-trie', () =>
     {
       const 
         groups  = new WildTrie(),
-        creator = groups.declare('creator'),
-        editor  = groups.declare('editor'),
-        cleaner = groups.declare('cleaner'),
-        reader  = groups.declare('reader')
+        creator = groups.add('creator'),
+        editor  = groups.add('editor'),
+        cleaner = groups.add('cleaner'),
+        reader  = groups.add('reader')
 
-      creator.reference('editor',   editor)
-             .reference('cleaner',  cleaner)
-
-      editor.reference('reader', reader)
-
-      cleaner.reference('reader', reader)
+      creator.set('editor',  editor) .set('reader', reader)
+      creator.set('cleaner', cleaner).set('reader', reader)
 
       const assert = contextualAssert({ groups })
 
@@ -432,9 +428,9 @@ suite('@superhero/wild-trie', () =>
   {
     const acl = new WildTrie()
 
-    acl.declare('admin', 'users', 'read')
-    acl.declare('admin', 'users', 'create')
-    acl.declare('user',  'users', 'read')
+    acl.add('admin', 'users', 'read')
+    acl.add('admin', 'users', 'create')
+    acl.add('user',  'users', 'read')
 
     const assert = contextualAssert({ acl })
 
