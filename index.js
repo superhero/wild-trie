@@ -208,15 +208,18 @@ export default class WildTrie
    */
   toJSON(depth = Infinity)
   {
-    depth = Number(depth)
-
     const
-      entries   = [ ...this.branches.entries() ],
-      mapper    = trie => depth > 0 ? trie.toJSON(depth - 1) : Object.prototype.toString.call(trie),
-      mapped    = entries.map(([ branch, trie ]) => [ branch, mapper(trie) ]),
-      branches  = Object.fromEntries(mapped)
+      json    = {},
+      compose = --depth >= 0
+        ? trie => this.branches.size ? trie.toJSON(depth) : trie.value
+        : trie => `[${trie.constructor?.name ?? 'Object'}]`
 
-    return branches
+    for(const [ branch, trie ] of this.branches)
+    {
+      json[branch] = compose(trie)
+    }
+
+    return json
   }
 
   /**
@@ -229,7 +232,7 @@ export default class WildTrie
   {
     let output = ''
 
-    const entries = [ ...this.branches.entries() ]
+    const entries = [ ...this.branches ]
 
     for(let i = 0; i < entries.length; i++)
     {
@@ -285,7 +288,7 @@ export default class WildTrie
     const
       stylize     = options?.stylize ?? (str => str),
       serialized  = this.toString(depth, stylize),
-      className   = stylize(this.name ?? this.config.name ?? this.constructor.name ?? 'WildTrie', 'special')
+      className   = stylize(this.config.name ?? this.name ?? this.constructor.name ?? 'WildTrie', 'special')
 
     return `${className} ${serialized}`
   }
