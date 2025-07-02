@@ -65,6 +65,18 @@ export default class WildTrie
   }
 
   /**
+   * Clears all descendant branches at the provided trie-path.
+   * @param {...*} [path]
+   * @returns {WildTrie|undefined} - Returns the `WildTrie` instance that was cleared of descendant branches.
+   */
+  clear(...path)
+  {
+    const trie = this.node(...path)
+    trie?.branches.clear()
+    return trie
+  }
+
+  /**
    * Declares the defined path, if not already defined.
    * @param {*} [branch] 
    * @param {...*} [path] 
@@ -99,13 +111,21 @@ export default class WildTrie
   }
 
   /**
-   * Deletes the specific branch of the trie path specified.
-   * @param {...*} [path]
+   * Deletes the specific branch of the trie-path specified.
+   * @param {...*} path - requires at least one path segment.
    * @returns {boolean} - Has mutatated
    */
   delete(...path)
   {
-    return this.node(...path)?.branches.delete(branch) ?? false
+    if(path.length)
+    {
+      const branch = path.pop()
+      return this.node(...path)?.branches.delete(branch) ?? false
+    }
+    else
+    {
+      return false
+    }
   }
 
   /**
@@ -197,7 +217,7 @@ export default class WildTrie
    */
   get size()
   {
-    return this.branches.size
+    return [ ...this.descendants() ].length
   }
 
   /**

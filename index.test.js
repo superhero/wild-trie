@@ -294,6 +294,60 @@ suite('@superhero/wild-trie', () =>
       })
     })
 
+    test('Can delete branches from the WildTrie', async (sub) =>
+    {
+      const acl = new WildTrie()
+
+      acl.declare('admin', 'users', 'read')
+      acl.declare('admin', 'users', 'create')
+      acl.declare('user',  'users', 'read')
+
+      const assert = contextualAssert({ acl })
+
+      assert.strictEqual(acl.has('admin', 'users', 'read'),   true, 'Admin should initially have read access')
+      assert.strictEqual(acl.has('admin', 'users', 'create'), true, 'Admin should initially have create access')
+
+      await sub.test('Deleting a specific permission', () =>
+      {
+        const mutated = acl.delete('admin', 'users', 'read')
+        assert.strictEqual(mutated, true, 'Delete should return true when a branch is removed')
+        assert.strictEqual(acl.has('admin', 'users', 'read'),  false, 'Admin should no longer have read access')
+        assert.strictEqual(acl.has('admin', 'users', 'create'), true, 'Admin should still have create access')
+      })
+
+      await sub.test('Deleting a specific resource', () =>
+      {
+        const
+          preMutationSize = acl.size,
+          mutated         = acl.delete('admin', 'users')
+
+        assert.strictEqual(mutated, true, 'Should return true when deleting "admin.users" branch')
+        assert.strictEqual(acl.node('admin').branches.has('users'), false, '"admin.users" branch should have been removed')
+        assert.strictEqual(acl.size, preMutationSize - 2, 'Size should have decreased by 2 nodes ("admin.users" and "admin.users.create")')
+      })
+
+      await sub.test('Deleting with no path does nothing', () =>
+      {
+        const
+          preMutationSize = acl.size,
+          mutated         = acl.delete()
+
+        assert.strictEqual(mutated, false, 'Should return false when deleting with no path')
+        assert.strictEqual(acl.has('user',  'users', 'read'), true, 'User should still have read access')
+        assert.strictEqual(acl.size, preMutationSize, 'All branches should stay the same')
+      })
+
+      await sub.test('Clear all descendant nodes', () =>
+      {
+        const preMutationSize = acl.size
+        acl.clear()
+
+        assert.notEqual(acl.size, preMutationSize, 'Expected to mutate size')
+        assert.strictEqual(acl.size, 0, 'Only the root node should remain')
+        assert.strictEqual(acl.has('user', 'users', 'read'), false, 'User should still not have read access')
+      })
+    })
+
     test('Can reference a shared trie', async sub =>
     {
       const 

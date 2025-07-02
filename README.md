@@ -72,15 +72,15 @@ const acl = new WildTrie()
 acl.declare('admin', '**', 'read')
 acl.declare('user', 'users', 'settings', 'personal', '**', 'read')
 
-acl.has('admin', 'users', 'settings', 'all', 'read')                // true
-acl.has('user', 'users', 'settings', 'personal', 'read')            // true
-acl.has('user', 'users', 'settings', 'personal', 'avatar', 'read')  // true
-acl.has('user', 'users', 'settings', 'all', 'read')                 // false
+acl.has('admin', 'users', 'settings', 'all',       'read')           // true
+acl.has('user',  'users', 'settings', 'personal',  'read')           // true
+acl.has('user',  'users', 'settings', 'personal',  'avatar', 'read') // true
+acl.has('user',  'users', 'settings', 'all',       'read')           // false
 ```
 
 ### Referencing Tries
 
-You can reference other trie nodes to share branches and link structures:
+You can reference other trie-nodes to share branches and link structures:
 
 ```javascript
 const acl = new WildTrie()
@@ -101,16 +101,16 @@ acl.has('group', 'reader', '**', 'create')  // false
 
 > **OBS!** Circular references are not possible...
 
-### Trie Node Variables
+### Trie-Node Variables
 
-Above mentioned example using variable pointers to trie nodes to declare with a less redundant code base.
+Above mentioned example using variable pointers to trie-nodes to declare with a less redundant code base.
 
 ```javascript
 const acl = new WildTrie()
 
 const groups = acl.declare('group')
 
-// When declaring the group branches the trie node representing the group is returned.
+// When declaring the group branches the trie-node representing the group is returned.
 const creator = groups.declare('creator')
 const editor  = groups.declare('editor')
 const reader  = groups.declare('reader')
@@ -124,12 +124,12 @@ reader.declare('**', 'read')
 creator.reference('editor', editor)
 editor.reference('reader', reader)
 
-// Can check permission usin gthe root acl trie node...
+// Can check permission usin gthe root acl trie-node...
 acl.has('group', 'creator', '**', 'create') // true
 acl.has('group', 'creator', '**', 'update') // true
 acl.has('group', 'creator', '**', 'read')   // true
 
-// ... or using the groups trie node variables.
+// ... or using the groups trie-node variables.
 creator.has('**', 'create') // true
 creator.has('**', 'update') // true
 creator.has('**', 'read')   // true
@@ -156,13 +156,14 @@ trie.node('foo', 'bar', 'baz', 'qux').value // 'foobar'
 
 ### Methods
 
-- `.declare(...path)`         - Declares and returns the trie node for the specified path.
-- `.define(value)`            - Defines a value at the trie node.
+- `.clear(...path)`           - Clear all descendant branches at the specified path.
+- `.declare(...path)`         - Declares and returns the trie-node for the specified path.
+- `.define(value)`            - Defines a value at the trie-node.
 - `.delete(...path)`          - Deletes the branch at the specified path.
-- `.descendants(...path)`     - Retrieves all descendant branches and sub-tries from the specified path.
+- `.descendants(...path)`     - Retrieves all descendant trie-nodes from the specified path.
 - `.has(...path)`             - Checks if the path exists.
-- `.node(...path)`            - Retrieves the specified trie node at the provided direct path.
-- `.reference(branch, trie)`  - Creates a reference from the current node to another trie node.
+- `.node(...path)`            - Retrieves the specified trie-node at the provided direct path.
+- `.reference(branch, trie)`  - Creates a reference from the current node to another trie-node.
 - `.leafs(...path)`           - Traverses the trie structure using wildcards, returns leaf-tries that match the specified path.
 - `.leafValues(...path)`      - Returns defined leaf values at the specified path.
 - `.trail(...path)`           - Traverses the trie structure in the same way `leafs` method does, returns the leaf nodes, all ancestors.
@@ -203,93 +204,99 @@ npm test
 
 @superhero/wild-trie 
 ├─ Can declare a WildTrie instance from the constructor 
-│  ├─ Can declare a basic WildTrie instance ✔ 1.157ms
-│  ├─ Can declare a WildTrie instance with a wildcard ✔ 0.173ms
-│  ├─ Can declare a WildTrie instance with a specified string value ✔ 0.138ms
-│  ├─ Can declare a WildTrie instance with a specified function value ✔ 0.160ms
-│  └─ ✔ 3.725ms
+│  ├─ Can declare a basic WildTrie instance ✔ 1.719ms
+│  ├─ Can declare a WildTrie instance with a wildcard ✔ 0.245ms
+│  ├─ Can declare a WildTrie instance with a specified string value ✔ 0.190ms
+│  ├─ Can declare a WildTrie instance with a specified function value ✔ 0.275ms
+│  └─ ✔ 4.964ms
 ├─ Can use the WildTrie class to structure an ACL instance 
 │  ├─ Can use the WildTrie class to structure a basic ACL instance 
 │  │  ├─ An admin can read users 
-│  │  │  ├─ A user can read users ✔ 0.272ms
-│  │  │  └─ ✔ 0.984ms
+│  │  │  ├─ A user can read users ✔ 0.499ms
+│  │  │  └─ ✔ 2.229ms
 │  │  ├─ An admin can create users 
-│  │  │  ├─ A user can not create users ✔ 0.213ms
-│  │  │  └─ ✔ 0.651ms
-│  │  └─ ✔ 2.248ms
+│  │  │  ├─ A user can not create users ✔ 0.310ms
+│  │  │  └─ ✔ 1.166ms
+│  │  └─ ✔ 4.493ms
 │  ├─ Can use branch wildcards 
 │  │  ├─ An admin can read users 
-│  │  │  ├─ A user can read users ✔ 0.408ms
-│  │  │  ├─ A guest can not read users ✔ 0.121ms
-│  │  │  └─ ✔ 0.818ms
+│  │  │  ├─ A user can read users ✔ 0.700ms
+│  │  │  ├─ A guest can not read users ✔ 0.281ms
+│  │  │  └─ ✔ 1.374ms
 │  │  ├─ An admin can create users 
-│  │  │  ├─ A user can not create users ✔ 0.250ms
-│  │  │  ├─ A guest can not create users ✔ 0.087ms
-│  │  │  └─ ✔ 0.538ms
+│  │  │  ├─ A user can not create users ✔ 0.379ms
+│  │  │  ├─ A guest can not create users ✔ 0.132ms
+│  │  │  └─ ✔ 0.867ms
 │  │  ├─ An admin has the permission to access all users 
-│  │  │  ├─ A user do not have the permission to access all users ✔ 0.095ms
-│  │  │  ├─ A guest do not have the permission to access all users ✔ 0.098ms
-│  │  │  └─ ✔ 0.380ms
+│  │  │  ├─ A user do not have the permission to access all users ✔ 0.147ms
+│  │  │  ├─ A guest do not have the permission to access all users ✔ 0.203ms
+│  │  │  └─ ✔ 0.634ms
 │  │  ├─ An admin can read resource A 
-│  │  │  ├─ A user can read resource A ✔ 0.093ms
-│  │  │  ├─ A guest can read resource A ✔ 0.095ms
-│  │  │  └─ ✔ 0.402ms
+│  │  │  ├─ A user can read resource A ✔ 0.136ms
+│  │  │  ├─ A guest can read resource A ✔ 0.159ms
+│  │  │  └─ ✔ 0.587ms
 │  │  ├─ An admin can create resource A 
-│  │  │  ├─ A user can create resource A ✔ 0.108ms
-│  │  │  ├─ A guest can not create resource A ✔ 0.091ms
-│  │  │  └─ ✔ 0.413ms
-│  │  └─ ✔ 3.144ms
+│  │  │  ├─ A user can create resource A ✔ 0.154ms
+│  │  │  ├─ A guest can not create resource A ✔ 0.131ms
+│  │  │  └─ ✔ 0.580ms
+│  │  └─ ✔ 4.816ms
 │  ├─ Can use descendants wildcards to check permissions 
 │  │  ├─ An admin has permissions 
-│  │  │  ├─ A user has permissions ✔ 0.133ms
-│  │  │  ├─ A guest has no permissions ✔ 0.083ms
-│  │  │  └─ ✔ 1.339ms
+│  │  │  ├─ A user has permissions ✔ 1.125ms
+│  │  │  ├─ A guest has no permissions ✔ 0.169ms
+│  │  │  └─ ✔ 1.711ms
 │  │  ├─ An admin can read its personal settings 
-│  │  │  ├─ A user can read its personal settings ✔ 0.094ms
-│  │  │  ├─ A guest can not read users settings ✔ 0.076ms
-│  │  │  └─ ✔ 0.355ms
+│  │  │  ├─ A user can read its personal settings ✔ 0.131ms
+│  │  │  ├─ A guest can not read users settings ✔ 0.108ms
+│  │  │  └─ ✔ 0.515ms
 │  │  ├─ An admin can read all users settings 
-│  │  │  ├─ A user can not read all users settings ✔ 0.096ms
-│  │  │  └─ ✔ 0.222ms
+│  │  │  ├─ A user can not read all users settings ✔ 0.134ms
+│  │  │  └─ ✔ 0.311ms
 │  │  ├─ An admin can read something 
-│  │  │  ├─ A user can read something ✔ 0.226ms
-│  │  │  ├─ A user can read som personal settings ✔ 0.099ms
-│  │  │  ├─ A user can update some of its personal settings ✔ 0.103ms
-│  │  │  └─ ✔ 0.691ms
+│  │  │  ├─ A user can read something ✔ 0.359ms
+│  │  │  ├─ A user can read som personal settings ✔ 0.127ms
+│  │  │  ├─ A user can update some of its personal settings ✔ 0.145ms
+│  │  │  └─ ✔ 0.992ms
 │  │  ├─ An admin can delete something 
-│  │  │  ├─ A user can not delete something ✔ 0.213ms
-│  │  │  └─ ✔ 0.358ms
-│  │  └─ ✔ 3.360ms
+│  │  │  ├─ A user can not delete something ✔ 0.281ms
+│  │  │  └─ ✔ 0.491ms
+│  │  └─ ✔ 4.586ms
 │  ├─ Can use descendants wildcards to declare permissions 
 │  │  ├─ An admin has access to read personal settings 
-│  │  │  ├─ A user has access to read personal settings ✔ 0.124ms
-│  │  │  ├─ A user has access to read nested personal settings ✔ 0.244ms
-│  │  │  ├─ A user has access to read multiple nested personal settings ✔ 0.216ms
-│  │  │  ├─ A user can not read all settings ✔ 0.121ms
-│  │  │  ├─ A user can not update personal settings ✔ 0.115ms
-│  │  │  ├─ A user can not update nested personal settings ✔ 0.139ms
-│  │  │  └─ ✔ 1.504ms
-│  │  └─ ✔ 1.703ms
+│  │  │  ├─ A user has access to read personal settings ✔ 0.174ms
+│  │  │  ├─ A user has access to read nested personal settings ✔ 0.181ms
+│  │  │  ├─ A user has access to read multiple nested personal settings ✔ 0.176ms
+│  │  │  ├─ A user can not read all settings ✔ 0.124ms
+│  │  │  ├─ A user can not update personal settings ✔ 0.147ms
+│  │  │  ├─ A user can not update nested personal settings ✔ 0.188ms
+│  │  │  └─ ✔ 1.667ms
+│  │  └─ ✔ 1.917ms
+│  ├─ Can delete branches from the WildTrie 
+│  │  ├─ Deleting a specific permission ✔ 0.238ms
+│  │  ├─ Deleting a specific resource ✔ 0.169ms
+│  │  ├─ Deleting with no path does nothing ✔ 0.173ms
+│  │  ├─ Clear all descendant nodes ✔ 0.270ms
+│  │  └─ ✔ 1.450ms
 │  ├─ Can reference a shared trie 
-│  │  ├─ A creator references an editor ✔ 0.117ms
-│  │  ├─ A creator references a cleaner ✔ 0.095ms
-│  │  ├─ A creator references a reader ✔ 0.095ms
-│  │  ├─ An editor references a reader ✔ 0.101ms
-│  │  ├─ A cleaner references a reader ✔ 0.162ms
-│  │  ├─ A reader does not reference an editor ✔ 0.179ms
-│  │  ├─ A reader does not reference a cleaner ✔ 0.102ms
-│  │  ├─ A reader does not reference a creator ✔ 0.093ms
-│  │  ├─ An editor does not reference a creator ✔ 0.096ms
-│  │  ├─ An editor does not reference a cleaner ✔ 0.097ms
-│  │  ├─ A cleaner does not reference a creator ✔ 0.107ms
-│  │  ├─ A cleaner does not reference an editor ✔ 0.096ms
-│  │  └─ ✔ 2.344ms
-│  └─ ✔ 13.044ms
+│  │  ├─ A creator references an editor ✔ 0.169ms
+│  │  ├─ A creator references a cleaner ✔ 0.137ms
+│  │  ├─ A creator references a reader ✔ 0.144ms
+│  │  ├─ An editor references a reader ✔ 0.122ms
+│  │  ├─ A cleaner references a reader ✔ 0.126ms
+│  │  ├─ A reader does not reference an editor ✔ 0.280ms
+│  │  ├─ A reader does not reference a cleaner ✔ 0.146ms
+│  │  ├─ A reader does not reference a creator ✔ 0.135ms
+│  │  ├─ An editor does not reference a creator ✔ 0.131ms
+│  │  ├─ An editor does not reference a cleaner ✔ 0.131ms
+│  │  ├─ A cleaner does not reference a creator ✔ 0.174ms
+│  │  ├─ A cleaner does not reference an editor ✔ 0.144ms
+│  │  └─ ✔ 3.135ms
+│  └─ ✔ 23.809ms
 ├─ Transform 
-│  ├─ Can use toJSON ✔ 0.384ms
-│  ├─ Can use toString ✔ 0.603ms
-│  └─ ✔ 1.122ms
-└─ ✔ 18.546ms
+│  ├─ Can use toJSON ✔ 0.638ms
+│  ├─ Can use toString ✔ 0.789ms
+│  └─ ✔ 1.636ms
+└─ ✔ 32.885ms
 
 
 ──────────────────────────────── ⋅⋆ Coverage ⋆⋅ ────────────────────────────────
@@ -297,11 +304,11 @@ npm test
 
 Files                                            Coverage   Functions   Branches
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.js                                              84%         80%        85%
+index.js                                              85%         81%        84%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 index.test.js                                        100%        100%       100%
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Total                                                 90%        91%         93%
+Total                                                 91%        90%         94%
 
 
 ───────────────────────────────── ⋅⋆ Summary ⋆⋅ ────────────────────────────────
@@ -309,9 +316,9 @@ Total                                                 90%        91%         93%
 
 Suites                                                                         4
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Tests                                                                         63
+Tests                                                                         68
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Passed                                                                        63
+Passed                                                                        68
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 Failed                                                                         0
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
@@ -320,6 +327,7 @@ Cancelled                                                                      0
 Skipped                                                                        0
 ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
 Todo                                                                           0
+
 ```
 
 ## License

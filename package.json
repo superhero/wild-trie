@@ -14,8 +14,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@superhero/audit": "4.7.4",
-    "@superhero/syntax-check": "0.0.2"
+    "@superhero/audit": "4.7.4"
   },
   "author": {
     "name": "Erik Landvall",
