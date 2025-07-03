@@ -64,6 +64,102 @@ export default class WildTrie
   }
 
   /**
+   * A factory method to create a `WildTrie` instance from a flat Object to an inflated representation.
+   * Each key in the flat object is expected to be a branch-path, where each segment is separated by the 
+   * provided separator. The method will inflate the flat object into a nested `WildTrie` structure.
+   * 
+   * The mapped values of a provided Map or Object is defined as states at the branch-path the key of 
+   * the value represents.
+   * 
+   * When the provided argument is a Set or an Array, then the values are expected to be strings that 
+   * defines the branch-path.
+   * 
+   * If the provided argument is already a `WildTrie` instance, it will be returned as is.
+   * 
+   * @param {Map|Set|Object|Array} arg  - The flat object map to inflate into a nested `WildTrie`.
+   * @param {string} [separator='.']    - The separator used to segregate each segment of the key.
+   * @param {string} [prefix='']        - An optional prefix to prepend to each branch-path.
+   * @returns {WildTrie}                - Returns the inflated new `WildTrie` instance.
+   */
+  static inflate(arg, separator='.', prefix='')
+  {
+    if(arg instanceof WildTrie)
+    {
+      return arg
+    }
+
+    // Ensure the provided configuration arguments are of the expected types.
+    if(typeof separator !== 'string')
+    {
+      throw new TypeError(`Expected a string separator, but received: ${typeof separator}`)
+    }
+    if(typeof prefix !== 'string')
+    {
+      throw new TypeError(`Expected a string prefix, but received: ${typeof prefix}`)
+    }
+
+    // Ensure the prefix ends with the separator.
+    // Ensure that the prefix is correctly formatted when concatenated with branch-paths.
+    if(prefix && false === prefix.endsWith(separator))
+    {
+      prefix += separator
+    }
+
+    // The inflated `WildTrie` instance being created.
+    const trie = new this()
+
+    // If the provided argument is a Set or an Array, then each item is expected to be a string branch-path.
+    if(arg instanceof Set 
+    || arg instanceof Array)
+    {
+      for(const item of arg)
+      {
+        if(typeof item !== 'string')
+        {
+          throw new TypeError(`Expected a string branch-path, but received: ${typeof item}`)
+        }
+
+        const path = `${prefix}${item}`.split(separator)
+        trie.add(...path)
+      }
+    }
+    // Else expecting a Map or an Object.
+    else
+    {
+      // Convert the Map or Object into an iterable of entries.
+      // Each entry is a tuple of the branch-key and the state.
+      let entries
+  
+      if(arg instanceof Map)
+      {
+        entries = arg.entries()
+      }
+      else if(arg instanceof Object)
+      {
+        entries = Object.entries(arg)
+      }
+      // Throws on invalid input arg type.
+      else
+      {
+        const argType = Object.prototype.toString.call(arg)
+        throw new TypeError(`Expected argument to be a Map, Set, Object or an Array, but received: ${argType}`)
+      }
+  
+      // Iterate over each entry and add it to the trie.
+      // Each entry is a tuple of the branch-key and the state.
+      // Sets the state of the trie-node at the added branch-path.
+      for(const [ key, state ] of entries)
+      {
+        const path = `${prefix}${key}`.split('.')
+        trie.add(...path).state = state
+      }
+    }
+
+    // Returns the constructed inflated `WildTrie` instance...
+    return trie
+  }
+
+  /**
    * Clears all descendant branches at the provided branch-path.
    * @param {...*} [path]
    * @returns {WildTrie|undefined} - Returns the `WildTrie` instance that was cleared of descendant branches.
@@ -167,10 +263,10 @@ export default class WildTrie
    * @param {...*} branch     - The branch to set the referenced trie on.
    * @param {WildTrie|*} lazy - The trie instance that is being defined to the specified branch. If the 
    *                            `lazy` argument is not already a `WildTrie` instance, then it will be
-   *                            wrapped by a new `WildTrie` instance, with the provided value as a state 
-   *                            of the created trie-node.
+   *                            wrapped by a new `WildTrie` instance, with the provided value set as the 
+   *                            state of the created trie-node.
    * @returns {WildTrie}      - Returns the `WildTrie` instance that has been set to the specified branch.
-   * @throws {ReferenceError} - E_WILD_TRIE_REFERENCE_CIRCULAR  - If the reference creates a circular path.
+   * @throws {ReferenceError} - If the reference creates a circular path.
    * 
    * @example
    * const trie1 = new WildTrie()
@@ -183,16 +279,16 @@ export default class WildTrie
   set(...path)
   {
     const
-      state   = path.pop(),
-      branch  = path.pop()
+      lazy = path.pop(),
+      leaf = path.pop()
 
     if(path.length)
     {
-      return this.add(...path).set(branch, state)
+      return this.add(...path).set(leaf, lazy)
     }
     else
     {
-      const trie = new this.constructor(state)
+      const trie = new this.constructor(lazy)
 
       for(const decendent of trie.descendants())
       {
@@ -205,7 +301,7 @@ export default class WildTrie
         }
       }
   
-      this.#branches.set(branch, trie)
+      this.#branches.set(leaf, trie)
 
       return trie
     }
