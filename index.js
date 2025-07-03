@@ -76,12 +76,15 @@ export default class WildTrie
    * 
    * If the provided argument is already a `WildTrie` instance, it will be returned as is.
    * 
+   * @template {*} StateType
    * @param {Map|Set|Object|Array} arg  - The flat object map to inflate into a nested `WildTrie`.
    * @param {string} [separator='.']    - The separator used to segregate each segment of the key.
    * @param {string} [prefix='']        - An optional prefix to prepend to each branch-path.
-   * @returns {WildTrie}                - Returns the inflated new `WildTrie` instance.
+   * @param {StateType} [stateType]     - An optional argument used to assert the type of the mapped state.
+   * @returns {WildTrie<StateType>}     - Returns the inflated new `WildTrie` instance.
+   * @throws {TypeError}                - Throws if the provided arguments are not of the expected types.
    */
-  static inflate(arg, separator='.', prefix='')
+  static inflate(arg, separator='.', prefix='', stateType)
   {
     if(arg instanceof WildTrie)
     {
@@ -150,8 +153,16 @@ export default class WildTrie
       // Sets the state of the trie-node at the added branch-path.
       for(const [ key, state ] of entries)
       {
-        const path = `${prefix}${key}`.split('.')
-        trie.add(...path).state = state
+        if(stateType && state instanceof stateType)
+        {
+          const path = `${prefix}${key}`.split('.')
+          trie.add(...path).state = state
+        }
+        else
+        {
+          const providedStateType = Object.prototype.toString.call(stateType)
+          throw new TypeError(`Expected a state of type ${stateType.name ?? stateType}, but received: ${providedStateType}`)
+        }
       }
     }
 
